@@ -1,0 +1,339 @@
+/* 自定义变量定义 */
+:root {
+	--primary-color: #4361ee;      /* 主色调：蓝色，用于主要元素和强调 */
+	--secondary-color: #3f37c9;    /* 次要色调：深蓝色，用于次要强调和标题 */
+	--accent-color: #4895ef;       /* 强调色：浅蓝色，用于交互元素和高亮 */
+	--dark-color: #333;            /* 深色：用于主要文本 */
+	--gray-color: #666;            /* 灰色：用于次要文本 */
+	--light-gray: #f5f5f5;         /* 浅灰色：用于背景和分隔 */
+	--white-color: #fff;           /* 白色：用于卡片和容器背景 */
+	--shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 基础阴影效果 */
+	--shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.15); /* 悬停时的阴影效果 */
+	--transition: all 0.3s ease;   /* 统一的过渡动画效果 */
+	--radius: 10px;                /* 统一的边框圆角半径 */
+}
+
+/* 全局样式重置 */
+* {
+	margin: 0;                     /* 清除默认外边距 */
+	padding: 0;                    /* 清除默认内边距 */
+	box-sizing: border-box;        /* 盒模型设置为border-box，确保padding和border不影响元素总宽度 */
+}
+
+/* 页面主体样式 */
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 设置字体族 */
+	line-height: 1.6;              /* 设置行高，提高可读性 */
+	color: var(--dark-color);      /* 使用深色作为文本颜色 */
+	background-color: #f5f7ff;     /* 页面背景色 */
+	padding: 20px 0;               /* 上下内边距 */
+}
+
+/* 容器样式 */
+.container {
+	max-width: 85%;             /* 取消最大宽度限制，让内容充分利用空间 */
+	margin: 0 auto;                /* 水平居中 */
+	padding: 0 20px;               /* 左右内边距，响应式留白 */
+}
+
+/* 页头样式 */
+header {
+	margin-bottom: 40px;           /* 底部外边距，与内容分隔 */
+	padding-bottom: 20px;          /* 底部内边距 */
+}
+
+/* 主标题样式 */
+h1 {
+	color: var(--primary-color);   /* 使用主色调 */
+	font-size: 2.2rem;             /* 字体大小 */
+	margin-bottom: 15px;           /* 底部外边距 */
+	padding-bottom: 10px;          /* 底部内边距 */
+	border-bottom: 3px solid var(--primary-color); /* 底部边框 */
+	position: relative;            /* 相对定位，用于伪元素 */
+}
+
+/* 主标题下方装饰线 */
+h1::after {
+	content: '';                   /* 伪元素内容为空 */
+	position: absolute;            /* 绝对定位 */
+	bottom: -3px;                  /* 定位在主标题边框下方 */
+	left: 0;                       /* 左对齐 */
+	width: 60px;                   /* 宽度 */
+	height: 3px;                   /* 高度 */
+	background-color: var(--accent-color); /* 使用强调色 */
+}
+
+/* 页头段落样式 */
+header p {
+	color: var(--gray-color);      /* 使用灰色 */
+	font-size: 1.1rem;             /* 稍大字体 */
+	max-width: 800px;              /* 最大宽度限制 */
+}
+
+/* 二级标题样式 */
+h2 {
+	color: var(--secondary-color); /* 使用次要色调 */
+	margin: 30px 0 20px;           /* 上下外边距 */
+	font-size: 1.6rem;             /* 字体大小 */
+	padding-bottom: 8px;           /* 底部内边距 */
+	border-bottom: 1px solid #eee; /* 底部边框 */
+}
+
+/* 三级标题样式 */
+h3 {
+	color: var(--primary-color);   /* 使用主色调 */
+	margin: 30px 0 20px;           /* 上下外边距 */
+	font-size: 1.4rem;             /* 字体大小 */
+	position: relative;            /* 相对定位 */
+	padding-left: 15px;            /* 左侧内边距 */
+}
+
+/* 段落样式 */
+p {
+	margin-bottom: 15px;           /* 底部外边距 */
+	line-height: 1.7;              /* 行高，提高可读性 */
+}
+
+/* 卡片组件样式 */
+.card {
+	background-color: var(--white-color); /* 白色背景 */
+	border-radius: 10px;           /* 圆角 */
+	box-shadow: var(--shadow);     /* 阴影效果 */
+	padding: 25px;                 /* 内边距 */
+	margin-bottom: 30px;           /* 底部外边距 */
+	transition: var(--transition); /* 过渡动画 */
+}
+
+/* 卡片悬停效果 */
+.card:hover {
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* 增强阴影 */
+}
+
+/* 链接样式 */
+a {
+	color: var(--primary-color);   /* 使用主色调 */
+	text-decoration: none;         /* 去除下划线 */
+	transition: var(--transition); /* 过渡动画 */
+	position: relative;            /* 相对定位 */
+}
+
+/* 悬停效果 */
+a:hover {
+	color: var(--accent-color);    /* 悬停时使用强调色 */
+}
+
+/* 链接下划线 */
+a::after {
+	content: '';                   /* 伪元素内容为空 */
+	position: absolute;            /* 绝对定位 */
+	bottom: -2px;                  /* 定位在文本下方 */
+	left: 0;                       /* 左对齐 */
+	width: 100%;                   /* 宽度与文本一致 */
+	height: 1px;                   /* 高度 */
+	background-color: var(--secondary-color); /* 背景色 */
+	transition: var(--transition); /* 过渡动画 */
+}
+
+/* 概念术语样式 */
+.concept {
+	position: relative;            /* 相对定位，用于工具提示 */
+	display: inline-block;         /* 行内块元素 */
+	color: var(--secondary-color); /* 使用次要色调 */
+	font-weight: 500;              /* 中等粗细 */
+	cursor: help;                  /* 鼠标指针显示为帮助图标 */
+}
+
+
+
+/* 概念术语悬停时下划线变化 */
+.concept:hover {
+	color: var(--accent-color); /* 变为强调色 */
+}
+
+/* 工具提示样式 */
+.tooltip {
+  position: absolute;
+  z-index: 100;
+  /* 1. 先默认向下显示（避免顶部溢出），后续通过 JS 判断是否需要向上 */
+  top: calc(100% + 8px); /* 从术语下方显示，距离 8px */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--dark-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 300px;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+  pointer-events: none;
+  /* 2. 增加文本换行优化，避免长提示被截断 */
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+/* 概念术语悬停时显示工具提示 */
+.concept:hover .tooltip {
+	opacity: 1;                    /* 完全不透明 */
+	visibility: visible;           /* 可见 */
+}
+
+
+/* 图表容器样式 */
+.chart-container {
+	margin: 30px 0;                /* 上下外边距 */
+	height: 350px;                 /* 固定高度 */
+	position: relative;            /* 相对定位 */
+}
+
+/* 表格样式 */
+table {
+	width: 100%;                   /* 宽度100% */
+	border-collapse: collapse;     /* 边框合并 */
+	margin: 20px 0;                /* 上下外边距 */
+}
+
+/* 表格单元格样式 */
+th, td {
+	padding: 12px 15px;            /* 内边距 */
+	text-align: left;              /* 左对齐 */
+	border-bottom: 1px solid #eee; /* 底部边框 */
+}
+
+/* 表头样式 */
+th {
+	background-color: var(--light-gray); /* 浅灰色背景 */
+	color: var(--secondary-color);      /* 次要色调文本 */
+}
+
+/* 表格行悬停效果 */
+tr:hover {
+	background-color: #f9f9f9;     /* 轻微背景色变化 */
+}
+
+/* 列表样式 */
+ul, ol {
+	margin: 15px 0 15px 30px;      /* 外边距，左侧缩进 */
+}
+
+/* 列表项样式 */
+li {
+	margin-bottom: 8px;            /* 底部外边距 */
+}
+
+/* 示例框样式 */
+.example-box {
+	border-left: 4px solid var(--accent-color); /* 左侧强调边框 */
+	padding: 15px;                 /* 内边距 */
+	background-color: #f8f9fa;     /* 浅灰色背景 */
+	margin: 20px 0;                /* 上下外边距 */
+	border-radius: 0 4px 4px 0;    /* 右侧和底部圆角 */
+}
+
+/* 示例框标题样式 */
+.example-box h4 {
+	margin-top: 0;                 /* 去除顶部外边距 */
+	color: var(--accent-color);    /* 强调色文本 */
+}
+
+/* 页脚样式 */
+footer {
+	margin-top: 50px;              /* 顶部外边距 */
+	padding-top: 20px;             /* 顶部内边距 */
+	border-top: 1px solid #eee;    /* 顶部边框 */
+	color: var(--gray-color);      /* 灰色文本 */
+	font-size: 0.9rem;             /* 较小字体 */
+	text-align: center;            /* 居中对齐 */
+}
+
+/* 响应式设计 - 中等屏幕以下 */
+@media (max-width: 768px) {
+	body {
+		padding: 15px 0;            /* 减少内边距 */
+	}
+	
+	.container {
+		padding: 0 15px;            /* 减少内边距 */
+	}
+	
+	h1 {
+		font-size: 2rem;            /* 减小字体 */
+	}
+	
+	h2 {
+		font-size: 1.4rem;          /* 减小字体 */
+	}
+	
+	h3 {
+		font-size: 1.2rem;          /* 减小字体 */
+		padding-left: 10px;         /* 减少左侧内边距 */
+	}
+	
+	.card {
+		padding: 20px;              /* 减少内边距 */
+		margin-bottom: 25px;        /* 减少底部外边距 */
+	}
+	
+	.chart-container {
+		height: 300px;              /* 减小高度 */
+		padding: 15px;              /* 增加内边距 */
+	}
+	
+	table {
+		display: block;             /* 转为块级元素 */
+		overflow-x: auto;           /* 允许水平滚动 */
+	}
+	
+	th, td {
+		padding: 12px 15px;         /* 保持内边距 */
+	}
+}
+
+/* 动画效果定义 */
+@keyframes fadeIn {
+	from {
+		opacity: 0;                 /* 初始透明度为0 */
+		transform: translateY(20px); /* 初始位置向下偏移 */
+	}
+	to {
+		opacity: 1;                 /* 最终透明度为1 */
+		transform: translateY(0);   /* 最终位置无偏移 */
+	}
+}
+
+/* 为卡片应用淡入动画 */
+.card {
+	animation: fadeIn 0.5s ease-out; /* 应用动画 */
+}
+
+/* 滚动到顶部按钮 */
+.back-to-top {
+	position: fixed;
+	bottom: 30px;
+	right: 30px;
+	background-color: var(--primary-color);
+	color: white;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	opacity: 0;
+	visibility: hidden;
+	transition: var(--transition);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+}
+
+.back-to-top.visible {
+	opacity: 1;
+	visibility: visible;
+}
+
+.back-to-top:hover {
+	background-color: var(--secondary-color);
+	transform: translateY(-5px);
+}

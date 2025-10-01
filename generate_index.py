@@ -7,7 +7,7 @@ TARGET_FOLDERS = ["code-note"]
 # 生成的 index.html 路径
 INDEX_PATH = "index.html"
 # HTML 模板文件路径
-TEMPLATE_PATH = "template.txt"
+TEMPLATE_PATH = "template.html"
 # -----------------------------------------------------------------------------
 
 def get_html_content():
