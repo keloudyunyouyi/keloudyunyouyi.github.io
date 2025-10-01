@@ -1,22 +1,206 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>我的文档索引</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档索引</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-        .folder { margin: 1.5rem 0; }
-        .folder h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem; }
-        .file-list { list-style: none; padding: 0; margin: 0.5rem 0 0 1.5rem; }
-        .file-list li { margin: 0.8rem 0; }
-        .file-list a { color: #3498db; text-decoration: none; }
-        .file-list a:hover { color: #2980b9; text-decoration: underline; }
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --light-gray: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f7ff;
+            padding: 2rem 0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        header p {
+            color: var(--gray-color);
+            font-size: 1.1rem;
+        }
+        
+        .folders-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .folder-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .folder-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .folder-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .folder-header i {
+            font-size: 1.5rem;
+        }
+        
+        .folder-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .folder-content {
+            padding: 1.5rem;
+        }
+        
+        .file-list {
+            list-style: none;
+        }
+        
+        .file-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .file-list li::before {
+            content: '📄';
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+        
+        .file-list a {
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+        
+        .file-list a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+        
+        .empty-message {
+            color: var(--gray-color);
+            text-align: center;
+            padding: 1rem;
+            font-style: italic;
+        }
+        
+        .error-message {
+            color: #e63946;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .folders-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>我的文档索引</h1>
-    <div class="folder"><h2>code-note/</h2><ul class="file-list"><li><a href="./code-note/uml介绍.html">uml介绍</a></li>
-<li><a href="./code-note/test.html">test</a></li></ul></div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-folder-open"></i> 文档索引</h1>
+            <p>浏览和访问所有可用的文档资源</p>
+        </header>
+        
+        <div class="folders-container">
+            
+            <div class="folder-card">
+                <div class="folder-header">
+                    <i class="fas fa-folder"></i>
+                    <h2>code-note/</h2>
+                </div>
+                <div class="folder-content">
+                    <ul class="file-list">
+                        <li><a href="./code-note/test.html">test</a></li>
+<li><a href="./code-note/uml介绍.html">uml介绍</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+        
+        <footer>
+            <p>自动生成的文档索引 | 更新于 2025-10-01 09:49:21</p>
+        </footer>
+    </div>
 </body>
 </html>
+    
