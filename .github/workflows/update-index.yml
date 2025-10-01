@@ -1,0 +1,46 @@
+# 工作流名称
+name: 自动更新 index.html
+
+# 触发条件：当代码 push 到 main 分支时（分支名根据实际修改，如 master）
+on:
+  push:
+    branches: [ main ]
+    # 仅当目标文件夹（code-note 等）或脚本文件变化时触发（避免不必要的运行）
+    paths:
+      - 'code-note/**'  # 监控 code-note 下所有文件
+      - 'generate_index.py'  # 监控脚本文件
+      - '.github/workflows/update-index.yml'  # 监控工作流文件
+
+# 工作流任务
+jobs:
+  update-index:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 系统运行
+    
+    steps:
+      # 步骤 1：检出 GitHub 仓库代码
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # 关闭默认凭证，后续用个人访问令牌
+    
+      # 步骤 2：安装 Python（运行生成脚本需要）
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'  # 选择合适的 Python 版本
+    
+      # 步骤 3：运行脚本生成 index.html
+      - name: 生成 index.html
+        run: python generate_index.py  # 执行脚本
+    
+      # 步骤 4：提交更新后的 index.html 到仓库
+      - name: 提交 index.html 更新
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # 要提交的文件（仅 index.html）
+          file_pattern: 'index.html'
+          # 提交信息
+          commit_message: '🔄 自动更新 index.html（由 GitHub Actions 触发）'
+          # 提交者信息（可自定义）
+          commit_user_name: 'GitHub Actions Bot'
+          commit_user_email: 'actions@github.com'

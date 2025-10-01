@@ -1,33 +1,13 @@
 import os
+from datetime import datetime
 
 # -------------------------- 配置参数（可根据需求修改）--------------------------
 # 要遍历的文件夹（后续新增文件夹，直接添加到列表中即可）
 TARGET_FOLDERS = ["code-note"]
-# 生成的 index.html 路径（固定在仓库根目录，GitHub Pages 会默认读取）
+# 生成的 index.html 路径
 INDEX_PATH = "index.html"
-# HTML 页面标题和样式（简单美化，可自定义）
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>我的文档索引</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }}
-        .folder {{ margin: 1.5rem 0; }}
-        .folder h2 {{ color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem; }}
-        .file-list {{ list-style: none; padding: 0; margin: 0.5rem 0 0 1.5rem; }}
-        .file-list li {{ margin: 0.8rem 0; }}
-        .file-list a {{ color: #3498db; text-decoration: none; }}
-        .file-list a:hover {{ color: #2980b9; text-decoration: underline; }}
-    </style>
-</head>
-<body>
-    <h1>我的文档索引</h1>
-    {content}
-</body>
-</html>
-"""
+# HTML 模板文件路径
+TEMPLATE_PATH = "template.html"
 # -----------------------------------------------------------------------------
 
 def get_html_content():
@@ -36,7 +16,17 @@ def get_html_content():
     for folder in TARGET_FOLDERS:
         # 检查文件夹是否存在
         if not os.path.exists(folder):
-            content += f'<div class="folder"><h2>{folder}/（文件夹不存在）</h2></div>'
+            content += f'''
+            <div class="folder-card">
+                <div class="folder-header">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>{folder}/</h2>
+                </div>
+                <div class="folder-content">
+                    <p class="error-message">文件夹不存在</p>
+                </div>
+            </div>
+            '''
             continue
         
         # 遍历文件夹下的 HTML 文件（仅保留 .html，排除子文件夹）
@@ -53,17 +43,61 @@ def get_html_content():
         # 生成该文件夹的 HTML 片段
         if html_files:
             file_list = "\n".join(html_files)
-            content += f'<div class="folder"><h2>{folder}/</h2><ul class="file-list">{file_list}</ul></div>'
+            content += f'''
+            <div class="folder-card">
+                <div class="folder-header">
+                    <i class="fas fa-folder"></i>
+                    <h2>{folder}/</h2>
+                </div>
+                <div class="folder-content">
+                    <ul class="file-list">
+                        {file_list}
+                    </ul>
+                </div>
+            </div>
+            '''
         else:
-            content += f'<div class="folder"><h2>{folder}/</h2><p>暂无 HTML 文件</p></div>'
+            content += f'''
+            <div class="folder-card">
+                <div class="folder-header">
+                    <i class="fas fa-folder"></i>
+                    <h2>{folder}/</h2>
+                </div>
+                <div class="folder-content">
+                    <p class="empty-message">暂无 HTML 文件</p>
+                </div>
+            </div>
+            '''
     
     return content
 
+def load_template():
+    """从文件加载HTML模板"""
+    if not os.path.exists(TEMPLATE_PATH):
+        print(f"❌ 错误：模板文件 {TEMPLATE_PATH} 不存在")
+        return None
+    
+    with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
+        return f.read()
+
 if __name__ == "__main__":
+    # 加载模板
+    html_template = load_template()
+    if not html_template:
+        exit(1)
+    
+    # 获取当前时间作为更新时间
+    update_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
     # 生成完整 HTML 内容
-    html_content = HTML_TEMPLATE.format(content=get_html_content())
+    html_content = html_template.format(
+        content=get_html_content(),
+        update_time=update_time
+    )
+    
     # 写入 index.html 文件
     with open(INDEX_PATH, "w", encoding="utf-8") as f:
         f.write(html_content)
     
     print(f"✅ index.html 已生成！路径：{os.path.abspath(INDEX_PATH)}")
+    
