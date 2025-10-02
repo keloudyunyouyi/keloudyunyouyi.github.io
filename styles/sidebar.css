@@ -215,3 +215,33 @@
     }
 
 }
+
+/* 文件列表样式 - 用户要求的样式规则 */
+.file-list {
+    list-style: none; /* 去掉列表项前面的点 */
+    padding: 0; /* 清除默认内边距 */
+    margin: 0; /* 清除默认外边距 */
+}
+
+.file-list li {
+    margin-bottom: 8px; /* 列表项之间的垂直间距 */
+}
+
+.file-list a {
+    color: #000000; /* 字体颜色设置为黑色 */
+    text-decoration: none; /* 去掉下划线 */
+    display: flex; /* 弹性布局：图标与文字横向对齐 */
+    align-items: center; /* 垂直居中 */
+    gap: 8px; /* 图标与文字之间的间距 */
+    padding: 8px 12px; /* 链接内边距（点击区域） */
+    border-radius: var(--radius); /* 链接圆角（使用全局变量） */
+    transition: all 0.3s ease; /* 所有状态变化的过渡动画（hover效果） */
+    font-size: 0.95rem; /* 链接字体大小 */
+}
+
+.file-list a:hover {
+    background-color: var(--hover-color); /* 悬浮背景色（使用全局变量） */
+    color: var(--primary-color); /* 悬浮文字色（全局主色） */
+    transform: translateX(5px); /* 悬浮时向右偏移（动效） */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* 悬浮时添加轻微阴影 */
+}

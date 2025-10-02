@@ -117,6 +117,11 @@ a {
 	position: relative;            /* 相对定位 */
 }
 
+/* 隐藏文件列表链接的伪元素下划线 */
+.file-list a::after {
+	display: none !important;      /* 强制隐藏伪元素下划线 */
+}
+
 /* 悬停效果 */
 a:hover {
 	color: var(--accent-color);    /* 悬停时使用强调色 */
