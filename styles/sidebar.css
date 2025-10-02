@@ -1,0 +1,217 @@
+/* 侧边栏专用样式文件 - 包含侧边栏布局、导航、卡片及响应式适配核心样式 */
+
+/* 1. 页面整体布局样式 - 控制侧边栏与主内容的排列结构 */
+.page-layout {
+    display: flex; /* 弹性布局：让侧边栏与主内容横向排列 */
+    gap: 30px; /* 侧边栏与主内容之间的间距 */
+    position: relative; /* 为子元素定位提供参考 */
+}
+
+/* 2. 侧边栏容器核心样式 - 控制侧边栏的位置、尺寸与滚动固定 */
+.sidebar {
+    width: 280px; /* 侧边栏固定宽度 */
+    flex-shrink: 0; /* 禁止侧边栏被压缩（保持固定宽度） */
+    position: sticky; /* 粘性定位：滚动时固定在顶部 */
+    top: 10px; /* 距离顶部的固定距离 */
+    left: 0; /* 固定在左侧 */
+    align-self: flex-start; /* 顶部对齐，避免因主内容高度影响位置 */
+    transition: transform 0.3s ease; /* 侧边栏位移时的过渡动画（预留扩展用） */
+}
+
+/* 3. 侧边栏卡片容器样式 - 包裹导航内容的外层卡片（含悬浮效果） */
+.sidebar-card {
+    background-color: var(--white-color); /* 卡片背景色（使用全局变量） */
+    border-radius: var(--radius); /* 卡片圆角（使用全局变量） */
+    box-shadow: var(--shadow); /* 卡片阴影（使用全局变量） */
+    margin-bottom: 10px; /* 多个卡片之间的垂直间距 */
+    overflow: hidden; /* 隐藏内部元素溢出部分（避免圆角失效） */
+    transition: var(--transition); /* 卡片状态变化的过渡动画（使用全局变量） */
+}
+
+/* 卡片悬浮交互效果 */
+.sidebar-card:hover {
+    box-shadow: var(--shadow-hover); /* 悬浮时增强阴影（使用全局变量） */
+}
+
+/* 4. 卡片头部样式 - 侧边栏卡片的标题区域 */
+.sidebar-card-header {
+    background-color: var(--primary-color); /* 头部背景色（全局主色） */
+    color: white; /* 头部文字白色 */
+    padding: 15px 20px; /* 内边距：上下15px，左右20px */
+    display: flex; /* 弹性布局：图标与标题横向对齐 */
+    align-items: center; /* 垂直居中对齐 */
+    gap: 10px; /* 图标与标题之间的间距 */
+    font-weight: 600; /* 标题文字加粗 */
+}
+
+
+/* 卡片头部标题样式 */
+.sidebar-card-header h3 {
+    margin: 0; /* 清除默认外边距 */
+    font-size: 1.1rem; /* 标题字体大小 */
+    color: white; /* 强制文字白色（避免继承全局样式） */
+    padding: 0; /* 清除默认内边距 */
+}
+
+/* 卡片头部链接样式（预留：若标题需要跳转） */
+.sidebar-card-header a {
+    color: inherit; /* 继承头部文字颜色（白色） */
+    text-decoration: none; /* 清除链接下划线 */
+    display: flex; /* 弹性布局：确保图标与文字对齐 */
+    align-items: center; /* 垂直居中 */
+    gap: 10px; /* 图标与文字间距 */
+}
+
+/* 头部链接悬浮效果 */
+.sidebar-card-header a:hover {
+    color: var(--accent-color); /* 悬浮时文字变为全局强调色（使用全局变量） */
+}
+
+/* 5. 卡片内容区样式 - 包裹导航列表的区域（含滚动） */
+.sidebar-card-content {
+    padding: 10px; /* 内容区内边距 */
+    max-height: 445px; /* 内容区最大高度（避免过长） */
+    overflow-y: auto; /* 超出最大高度时显示垂直滚动条 */
+}
+
+/* 内容区段落样式（预留：若需在卡片内添加文字说明） */
+.sidebar-card-content p {
+    margin-bottom: 10px; /* 段落底部间距 */
+    font-size: 0.95rem; /* 段落字体大小 */
+}
+
+/* 滚动条样式 - 美化卡片内容区的滚动条（仅WebKit浏览器生效） */
+/* 滚动条整体宽度 */
+.sidebar-card-content::-webkit-scrollbar {
+    width: 6px; /* 滚动条宽度（避免过宽影响布局） */
+}
+
+/* 滚动条轨道样式（背景） */
+.sidebar-card-content::-webkit-scrollbar-track {
+    background: var(--background-color); /* 轨道背景色（使用全局变量） */
+    border-radius: 3px; /* 轨道圆角 */
+}
+
+/* 滚动条滑块样式（可拖动部分） */
+.sidebar-card-content::-webkit-scrollbar-thumb {
+    background: var(--border-color); /* 滑块颜色（使用全局变量） */
+    border-radius: 3px; /* 滑块圆角 */
+}
+
+/* 滚动条滑块悬浮效果 */
+.sidebar-card-content::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color); /* 悬浮时滑块变为全局辅助色（使用全局变量） */
+}
+
+/* 文章导航列表基础样式 - 一级/二级导航的公共容器 */
+.article-toc {
+    list-style: none; /* 清除默认列表圆点 */
+    padding: 0; /* 清除默认内边距 */
+    margin: 0; /* 清除默认外边距 */
+}
+
+/* 列表项基础间距 */
+.article-toc li {
+    margin-bottom: 8px; /* 列表项之间的垂直间距 */
+}
+
+/* 导航链接通用样式 - 一级/二级导航链接的公共样式 */
+.article-toc a {
+    display: flex; /* 弹性布局：图标与文字横向对齐 */
+    align-items: center; /* 垂直居中 */
+    gap: 8px; /* 图标与文字之间的间距 */
+    padding: 8px 12px; /* 链接内边距（点击区域） */
+    color: var(--text-color); /* 链接文字色（使用全局变量） */
+    text-decoration: none; /* 清除链接下划线 */
+    border-radius: var(--radius); /* 链接圆角（使用全局变量） */
+    transition: all 0.3s ease; /* 所有状态变化的过渡动画（ hover 效果） */
+    font-size: 0.95rem; /* 链接字体大小 */
+    position: relative; /* 为伪元素定位提供参考 */
+    overflow: hidden; /* 隐藏伪元素溢出部分 */
+}
+
+/* 导航链接左侧高亮条（伪元素）- 悬浮时显示 */
+.article-toc a::before {
+    content: ''; /* 伪元素必须有内容（空值也可） */
+    position: absolute; /* 绝对定位：相对于链接 */
+    left: 0; /* 固定在左侧 */
+    top: 0; /* 固定在顶部 */
+    height: 100%; /* 高度与链接一致 */
+    width: 3px; /* 高亮条宽度 */
+    background-color: var(--primary-color); /* 高亮条颜色（全局主色） */
+    transform: scaleY(0); /* 默认隐藏：Y轴缩放为0 */
+    transition: transform 0.3s ease; /* 缩放过渡动画 */
+    border-radius: 0 var(--radius) var(--radius) 0; /* 右侧圆角（与链接对齐） */
+}
+
+/* 导航链接悬浮交互效果 */
+.article-toc a:hover {
+    background-color: var(--hover-color); /* 悬浮背景色（使用全局变量） */
+    color: var(--primary-color); /* 悬浮文字色（全局主色） */
+    transform: translateX(5px); /* 悬浮时向右偏移（动效） */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* 悬浮时添加轻微阴影 */
+}
+
+/* 悬浮时显示左侧高亮条 */
+.article-toc a:hover::before {
+    transform: scaleY(1); /* Y轴缩放为1（显示高亮条） */
+}
+
+
+/* 9. 一级章节样式 - 导航列表中的父级章节（h2 对应） */
+.toc-section {
+    margin-top: 12px; /* 与上一个一级章节的间距（区分层级） */
+}
+
+/* 一级章节链接样式 - 突出显示 */
+.toc-section > a {
+    font-weight: 600; /* 文字加粗（区分二级章节） */
+    color: var(--heading-color); /* 文字色（全局标题色，使用全局变量） */
+}
+
+/* 10. 二级章节样式 - 导航列表中的子级章节（h3 对应） */
+.toc-subsection {
+    list-style: none; /* 清除默认列表圆点 */
+}
+
+/* 响应式设计 - 不同屏幕尺寸下的适配规则 */
+/* 适配平板屏幕（1024px及以下） */
+@media (max-width: 1024px) {
+    .page-layout {
+        gap: 20px; /* 减小侧边栏与主内容的间距 */
+    }
+    
+    .sidebar {
+        width: 250px; /* 缩小侧边栏宽度 */
+    }
+}
+
+/* 适配手机屏幕（768px及以下） */
+@media (max-width: 768px) {
+    .page-layout {
+        flex-direction: column; /* 改为垂直布局：侧边栏在上，主内容在下 */
+    }
+    
+    .sidebar {
+        width: 100%; /* 侧边栏占满屏幕宽度 */
+        position: static; /* 取消粘性定位（恢复正常文档流） */
+    }
+    
+    .sidebar-card {
+        display: inline-block; /* 改为行内块布局（支持多列） */
+        width: calc(50% - 10px); /* 两列布局：宽度50% - 间距补偿 */
+        margin-right: 20px; /* 卡片右侧间距 */
+        margin-bottom: 20px; /* 卡片底部间距 */
+    }
+    
+    /* 清除偶数卡片的右侧间距（避免换行） */
+    .sidebar-card:nth-child(2n) {
+        margin-right: 0; /* 偶数卡片无右侧间距 */
+    }
+    
+    /* 侧边栏切换按钮（预留功能）- 手机端隐藏（当前无此按钮） */
+    .toggle-sidebar-btn {
+        display: none; /* 隐藏按钮 */
+    }
+
+}

@@ -7,13 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 引用外部CSS文件 -->
-    <link rel="stylesheet" href="tst.css">
-    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="styles/tst.css">
+    <link rel="stylesheet" href="styles/sidebar.css">
     
 </head>
 <body>
     <div class="container">
-        <!-- 页面布局：侧边栏 + 主内容 -->
         <div class="page-layout">
             <!-- 主内容区域 -->
             <main class="main-content">
@@ -55,7 +54,7 @@
 
                     <section class="card">
                         <h2 id="section-2">二、UML的核心：14种建模图表（按视图分类）</h2>
-                        <p>UML通过"视图（View）"划分软件系统的不同维度，每个视图对应一组特定用途的图表。核心可分为结构视图（描述"是什么"）和行为视图（描述"做什么"），再加上"实现视图"和"部署视图"，共4大视图、14种图表。</p>
+                        <p>UML通过"视图（View）"划分软件系统的不同维度，每个视图对应一组特定用途的图表。核心可分为结构视图（描述"是什么"）和行为视图（描述"做什么"）两大视图、14种图表。</p>
 
                         <div class="chart-container">
                             <canvas id="diagramTypesChart"></canvas>
@@ -311,245 +310,199 @@
                 <footer>
                     <p>文档最后更新时间：2025年10月1日</p>
                 </footer>
-                </div>
-
-                <script>
-                    // 等待DOM加载完成
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // UML发展时间线图表
-                        const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-                        new Chart(timelineCtx, {
-                            type: 'line',
-                            data: {
-                                labels: ['1994', '1995', '1996', '1997', '2005', '2011', '2017'],
-                                datasets: [{
-                                    label: 'UML版本演进',
-                                    data: [0.9, 1.0, 1.1, 1.3, 2.0, 2.41, 2.51],
-                                    borderColor: '#4361ee',
-                                    backgroundColor: 'rgba(67, 97, 238, 0.1)',
-                                    fill: true,
-                                    tension: 0.4,
-                                    pointBackgroundColor: '#4895ef',
-                                    pointRadius: 5,
-                                    pointHoverRadius: 7
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: 'UML版本演进时间线',
-                                        font: {
-                                            size: 16
-                                        }
-                                    },
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function(context) {
-                                                return `UML ${context.raw}`;
-                                            }
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        title: {
-                                            display: true,
-                                            text: '版本号'
-                                        },
-                                        ticks: {
-                                            callback: function(value) {
-                                                return value;
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        title: {
-                                            display: true,
-                                            text: '年份'
-                                        }
-                                    }
-                                }
-                            }
-                        });
-
-                        // UML图表类型分布
-                        const diagramTypesCtx = document.getElementById('diagramTypesChart').getContext('2d');
-                        new Chart(diagramTypesCtx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: ['结构视图', '行为视图', '实现视图', '部署视图'],
-                                datasets: [{
-                                    data: [7, 7, 0, 1],
-                                    backgroundColor: [
-                                        '#4361ee',
-                                        '#4895ef',
-                                        '#3f37c9',
-                                        '#4cc9f0'
-                                    ],
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: 'UML图表类型分布',
-                                        font: {
-                                            size: 16
-                                        }
-                                    },
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function(context) {
-                                                return `${context.label}: ${context.raw} 种图表`;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-
-                        // UML关系类型使用频率
-                        const relationshipCtx = document.getElementById('relationshipChart').getContext('2d');
-                        new Chart(relationshipCtx, {
-                            type: 'bar',
-                            data: {
-                                labels: ['关联', '依赖', '泛化', '实现'],
-                                datasets: [{
-                                    label: '在项目中的使用频率（相对值）',
-                                    data: [90, 85, 70, 65],
-                                    backgroundColor: [
-                                        'rgba(67, 97, 238, 0.7)',
-                                        'rgba(72, 149, 239, 0.7)',
-                                        'rgba(63, 55, 201, 0.7)',
-                                        'rgba(76, 201, 240, 0.7)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(67, 97, 238, 1)',
-                                        'rgba(72, 149, 239, 1)',
-                                        'rgba(63, 55, 201, 1)',
-                                        'rgba(76, 201, 240, 1)'
-                                    ],
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: 'UML关系类型使用频率',
-                                        font: {
-                                            size: 16
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        max: 100,
-                                        title: {
-                                            display: true,
-                                            text: '使用频率（%）'
-                                        }
-                                    }
-                                }
-                            }
-                        });
-
-                        // UML工具使用比例
-                        const toolsCtx = document.getElementById('toolsChart').getContext('2d');
-                        new Chart(toolsCtx, {
-                            type: 'pie',
-                            data: {
-                                labels: ['Draw.io', 'StarUML', 'Enterprise Architect', 'Visio', 'Rational Rose', '其他'],
-                                datasets: [{
-                                    data: [35, 25, 15, 12, 8, 5],
-                                    backgroundColor: [
-                                        '#4361ee',
-                                        '#4895ef',
-                                        '#3f37c9',
-                                        '#4cc9f0',
-                                        '#480ca8',
-                                        '#9f7aea'
-                                    ],
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: 'UML建模工具使用比例',
-                                        font: {
-                                            size: 16
-                                        }
-                                    },
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function(context) {
-                                                return `${context.label}: ${context.raw}%`;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    });
-
-                    // 返回顶部按钮功能
-                    const backToTopButton = document.createElement('div');
-                    backToTopButton.className = 'back-to-top';
-                    backToTopButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
-                    document.body.appendChild(backToTopButton);
-
-                    // 监听滚动事件，显示或隐藏返回顶部按钮
-                    window.addEventListener('scroll', function() {
-                        if (window.pageYOffset > 300) {
-                            backToTopButton.classList.add('visible');
-                        } else {
-                            backToTopButton.classList.remove('visible');
-                        }
-                    });
-
-                    // 点击返回顶部按钮时平滑滚动到页面顶部
-                    backToTopButton.addEventListener('click', function() {
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                    });
-
-                    // 修复概念提示框的显示问题
-                    document.querySelectorAll('.concept').forEach(concept => {
-                        const tooltip = concept.querySelector('.tooltip');
-                        if (tooltip) {
-                            concept.addEventListener('mouseenter', function() {
-                                tooltip.style.display = 'block';
-                                setTimeout(() => {
-                                    tooltip.style.opacity = '1';
-                                    tooltip.style.visibility = 'visible';
-                                }, 10);
-                            });
-                            
-                            concept.addEventListener('mouseleave', function() {
-                                tooltip.style.opacity = '0';
-                                tooltip.style.visibility = 'hidden';
-                                setTimeout(() => {
-                                    tooltip.style.display = 'none';
-                                }, 300);
-                            });
-                        }
-                    });
-                </script>
-                <!-- 引入外部的侧边栏生成脚本 -->
-                  <script src="sidebar.js"></script>
-            </main>
         </div>
+
+        <script>
+            // 等待DOM加载完成
+            document.addEventListener('DOMContentLoaded', function() {
+                // UML发展时间线图表
+                const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+                new Chart(timelineCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1994', '1995', '1996', '1997', '2005', '2011', '2017'],
+                        datasets: [{
+                            label: 'UML版本演进',
+                            data: [0.9, 1.0, 1.1, 1.3, 2.0, 2.41, 2.51],
+                            borderColor: '#4361ee',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#4895ef',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'UML版本演进时间线',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `UML ${context.raw}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '版本号'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value;
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '年份'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // UML图表类型分布
+                const diagramTypesCtx = document.getElementById('diagramTypesChart').getContext('2d');
+                new Chart(diagramTypesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['结构视图', '行为视图'],
+                        datasets: [{
+                            data: [7, 7],
+                            backgroundColor: [
+                                '#3f37c9',
+                                '#4cc9f0'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'UML图表类型分布',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw} 种图表`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // UML关系类型使用频率
+                const relationshipCtx = document.getElementById('relationshipChart').getContext('2d');
+                new Chart(relationshipCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['关联', '依赖', '泛化', '实现'],
+                        datasets: [{
+                            label: '在项目中的使用频率（相对值）',
+                            data: [90, 85, 70, 65],
+                            backgroundColor: [
+                                'rgba(67, 97, 238, 0.7)',
+                                'rgba(72, 149, 239, 0.7)',
+                                'rgba(63, 55, 201, 0.7)',
+                                'rgba(76, 201, 240, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(67, 97, 238, 1)',
+                                'rgba(72, 149, 239, 1)',
+                                'rgba(63, 55, 201, 1)',
+                                'rgba(76, 201, 240, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'UML关系类型使用频率',
+                                font: {
+                                    size: 16
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: '使用频率（%）'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // UML工具使用比例
+                const toolsCtx = document.getElementById('toolsChart').getContext('2d');
+                new Chart(toolsCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Draw.io', 'StarUML', 'Enterprise Architect', 'Visio', 'Rational Rose', '其他'],
+                        datasets: [{
+                            data: [35, 25, 15, 12, 8, 5],
+                            backgroundColor: [
+                                '#4361ee',
+                                '#4895ef',
+                                '#3f37c9',
+                                '#4cc9f0',
+                                '#480ca8',
+                                '#9f7aea'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'UML建模工具使用比例',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            
+
+        </script>
+        <!-- 引入外部的侧边栏生成脚本 -->
+        <script src="sidebar.js"></script>
     </div>
 </body>
 </html>
