@@ -8,5 +8,11 @@
       "url": "prompt工程原理.html",
       "name": "prompt工程原理"
     }
+  ],
+  "开发": [
+    {
+      "url": "git进阶.html",
+      "name": "git进阶"
+    }
   ]
 }

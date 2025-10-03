@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 # -------------------------- 配置参数 --------------------------
-TARGET_FOLDERS = ["code-note"]
+TARGET_FOLDERS = ["code-note","开发"]
 INDEX_PATH = "index.html"
 TEMPLATE_PATH = "template.html"
 JSON_PATH = "file-list.json"
