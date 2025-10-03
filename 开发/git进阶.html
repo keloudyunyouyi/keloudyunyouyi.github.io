@@ -1,69 +1,282 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- 元信息配置（固定不可修改） -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git 进阶技术与团队协作实践指南 - 全面的Git高级应用手册</title>
-    <!-- 外部资源引入（可按需增加） -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- 自定义CSS（路径固定） -->
-    <link rel="stylesheet" href="../styles/tst.css">
-    <link rel="stylesheet" href="../styles/sidebar.css">
+    <title>Git进阶技术与团队协作实践指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script>
+        // Tailwind 配置
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2383e2',
+                        secondary: '#6e7681',
+                        dark: {
+                            100: '#f7f6f3',
+                            200: '#e4e2dd',
+                            300: '#d1cec6',
+                            400: '#b8b3a9',
+                            500: '#9f988b',
+                            600: '#867e6f',
+                            700: '#6d6454',
+                            800: '#544b39',
+                            900: '#37352f',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .code-block {
+                position: relative;
+                overflow-x: auto;
+            }
+            .copy-btn {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+            }
+            .copy-btn:hover {
+                opacity: 1;
+            }
+            .nav-item-active {
+                @apply bg-gray-100 dark:bg-dark-800 text-primary border-l-2 border-primary;
+            }
+            .nav-item {
+                @apply px-3 py-2 rounded-md text-sm transition-all duration-200 hover:bg-gray-100 dark:hover:bg-dark-800 cursor-pointer;
+            }
+            .nav-subitem {
+                @apply px-6 py-1.5 text-sm transition-all duration-200 hover:bg-gray-100 dark:hover:bg-dark-800 cursor-pointer;
+            }
+        }
+    </style>
+    <!-- 预加载字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body>
-    <!-- 根容器 -->
-    <div class="container">
-        <!-- 页面布局容器 -->
-        <div class="page-layout">
-            <!-- 主内容区域（含main-content类） -->
-            <main class="main-content">
-                <!-- 页头区域 -->
-                <header>
-                    <h1 id="article-title">Git 进阶技术与团队协作实践指南</h1>
-                    <p>全面解析Git高级特性、工作流设计与团队协作最佳实践，提升开发效率与代码质量</p>
-                </header>
+<body class="bg-white dark:bg-dark-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+    <!-- 顶部导航栏 - 移动端 -->
+    <header class="lg:hidden fixed top-0 left-0 right-0 bg-white dark:bg-dark-900 border-b border-gray-200 dark:border-dark-700 z-30">
+        <div class="flex items-center justify-between px-4 py-3">
+            <button id="mobile-menu-btn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-800">
+                <i class="fa fa-bars text-gray-600 dark:text-gray-300"></i>
+            </button>
+            <h1 class="text-lg font-semibold truncate">Git进阶技术指南</h1>
+            <button id="theme-toggle" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-800">
+                <i class="fa fa-moon-o dark:hidden text-gray-600"></i>
+                <i class="fa fa-sun-o hidden dark:inline text-yellow-300"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 侧边导航栏 - 桌面端 -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-50 dark:bg-dark-800 border-r border-gray-200 dark:border-dark-700 overflow-y-auto scrollbar-hide hidden lg:block z-20">
+        <div class="p-4 border-b border-gray-200 dark:border-dark-700">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Git进阶技术指南</h1>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">全面覆盖Git高级特性与团队协作实践</p>
+        </div>
+        
+        <nav class="p-3">
+            <!-- 第一章：Git进阶技术体系 -->
+            <div class="mt-2">
+                <div class="nav-item flex items-center justify-between" onclick="toggleNavSection('section1')">
+                    <span>一、Git进阶技术体系</span>
+                    <i id="section1-icon" class="fa fa-chevron-down text-xs"></i>
+                </div>
+                <div id="section1" class="hidden mt-1">
+                    <div class="nav-subitem" onclick="scrollToSection('git-hooks')">1.1 Git钩子高级应用</div>
+                    <div class="nav-subitem" onclick="scrollToSection('submodules')">1.2 子模块与大型仓库管理</div>
+                    <div class="nav-subitem" onclick="scrollToSection('cicd')">1.3 CI/CD集成实战</div>
+                </div>
+            </div>
+            
+            <!-- 第二章：团队协作与开源项目实践 -->
+            <div class="mt-2">
+                <div class="nav-item flex items-center justify-between" onclick="toggleNavSection('section2')">
+                    <span>二、团队协作与开源项目实践</span>
+                    <i id="section2-icon" class="fa fa-chevron-down text-xs"></i>
+                </div>
+                <div id="section2" class="hidden mt-1">
+                    <div class="nav-subitem" onclick="scrollToSection('open-source')">2.1 开源项目协作模式</div>
+                    <div class="nav-subitem" onclick="scrollToSection('team-workflow')">2.2 企业团队工作流设计</div>
+                    <div class="nav-subitem" onclick="scrollToSection('code-review')">2.3 代码审查流程与质量控制</div>
+                </div>
+            </div>
+            
+            <!-- 第三章：场景化应用与实践案例 -->
+            <div class="mt-2">
+                <div class="nav-item flex items-center justify-between" onclick="toggleNavSection('section3')">
+                    <span>三、场景化应用与实践案例</span>
+                    <i id="section3-icon" class="fa fa-chevron-down text-xs"></i>
+                </div>
+                <div id="section3" class="hidden mt-1">
+                    <div class="nav-subitem" onclick="scrollToSection('personal-dev')">3.1 个人开发者进阶实践</div>
+                </div>
+            </div>
+            
+            <!-- 主题切换 -->
+            <div class="mt-6 p-3">
+                <button id="sidebar-theme-toggle" class="w-full flex items-center justify-center py-2 rounded-md bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 transition-colors">
+                    <i class="fa fa-moon-o dark:hidden mr-2"></i>
+                    <i class="fa fa-sun-o hidden dark:inline mr-2 text-yellow-300"></i>
+                    <span id="theme-text">切换到暗色模式</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="lg:ml-64 pt-14 lg:pt-0 min-h-screen pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- 封面区域 -->
+            <div class="mb-12 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Git进阶技术与团队协作实践指南</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                    深入探索Git高级特性，构建高效团队协作流程，提升开发效率与代码质量
+                </p>
+                <div class="mt-8 flex flex-wrap justify-center gap-4">
+                    <a href="#git-hooks" class="px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors flex items-center">
+                        <i class="fa fa-book mr-2"></i>开始阅读
+                    </a>
+                    <button id="table-of-contents-btn" class="px-6 py-3 bg-gray-200 dark:bg-dark-800 rounded-md hover:bg-gray-300 dark:hover:bg-dark-700 transition-colors flex items-center lg:hidden">
+                        <i class="fa fa-list mr-2"></i>目录
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第一章：Git进阶技术体系 -->
+            <section id="git-advanced" class="mb-16">
+                <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white border-b pb-2 border-gray-200 dark:border-dark-700">一、Git进阶技术体系</h2>
                 
-                <!-- 正文区域（内容需在card中） -->
-                <main>
-                    <!-- 一、Git 进阶技术体系 -->
-                    <section class="card">
-                        <h2 id="git-advanced-tech">一、Git 进阶技术体系</h2>
+                <!-- 1.1 Git钩子高级应用 -->
+                <section id="git-hooks" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">1.1 Git钩子高级应用</h3>
+                    
+                    <!-- 1.1.1 客户端钩子深度解析 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.1.1 客户端钩子深度解析</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            Git钩子是版本控制系统的强大特性，允许用户在特定的Git事件发生时自动执行自定义脚本，从而增强开发流程的自动化和效率。客户端钩子在本地Git仓库中执行，主要用于约束开发者的提交、推送等操作。
+                        </p>
                         
-                        <!-- 1.1 Git 钩子高级应用 -->
-                        <div class="card-section">
-                            <h3 id="git-hooks">1.1 Git 钩子高级应用</h3>
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">pre-commit钩子</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                是最常用的客户端钩子之一，在每次执行git commit命令时，在要求填入提交信息或者生成提交对象之前被触发执行。这个钩子可以用于执行代码风格检查、运行单元测试、检查代码格式等操作。
+                            </p>
                             
-                            <h4 id="client-hooks">1.1.1 客户端钩子深度解析</h4>
-                            <p>Git 钩子允许用户在特定的 Git 事件发生时自动执行自定义脚本，增强开发流程的自动化和效率。客户端钩子在本地 Git 仓库中执行，主要用于约束开发者的提交、推送等操作。</p>
-                            
-                            <div class="code-block">
-                                <h5>pre-commit 钩子示例</h5>
-                                <pre><code>#!/bin/sh
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">#!/bin/sh
 # 检查代码格式
 git diff --staged --check
 # 执行单元测试
 make test</code></pre>
                             </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">prepare-commit-msg钩子</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                在pre-commit钩子执行完成后触发，它会弹出含有提交信息的文本编辑器。这个钩子可以用来修改squash或merge命令自动生成的提交信息。prepare-commit-msg脚本接受三个参数：储存提交信息的临时文件名称、提交类型、关联提交的SHA1哈希值。
+                            </p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">commit-msg钩子</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                在用户输入了提交信息之后触发执行，用于检查提交信息是否符合规范。
+                            </p>
                             
-                            <p>commit-msg 钩子在用户输入了提交信息之后触发执行，用于检查提交信息是否符合规范：</p>
-                            <div class="code-block">
-                                <h5>commit-msg 钩子示例</h5>
-                                <pre><code>#!/bin/sh
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">#!/bin/sh
 # 检查提交信息格式
 if ! grep -E '^[A-Z0-9]+-[0-9]+:[A-Z0-9]+:[A-Z0-9]+$' "$1"; then
     echo "提交信息格式错误"
     exit 1
 fi</code></pre>
                             </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">post-commit钩子</h5>
+                                <p class="text-gray-700 dark:text-gray-400 leading-relaxed text-sm">
+                                    在commit-msg钩子之后立即执行，它不能修改git commit操作本身，主要用于消息通知。这个钩子适合用于通知团队成员、更新文档或执行自动部署等任务。
+                                </p>
+                            </div>
                             
-                            <h4 id="server-hooks">1.1.2 服务端钩子与权限控制</h4>
-                            <p>服务端钩子在 Git 服务器上执行，主要用于全局控制推送行为，如分支保护、自动化部署等。</p>
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">pre-push钩子</h5>
+                                <p class="text-gray-700 dark:text-gray-400 leading-relaxed text-sm">
+                                    在git push执行前触发，用于检查远程分支状态、运行集成测试，阻止无效推送。例如，可以在pre-push钩子中运行更全面的测试套件，确保代码质量。
+                                </p>
+                            </div>
                             
-                            <div class="code-block">
-                                <h5>pre-receive 钩子示例（防止向主分支直接推送）</h5>
-                                <pre><code>#!/bin/sh
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700 md:col-span-2">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">pre-rebase钩子</h5>
+                                <p class="text-gray-700 dark:text-gray-400 leading-relaxed text-sm">
+                                    在git rebase执行之前被触发，可以进行检查以避免发生破坏性的事情。例如，可以禁止对已推送的分支进行rebase操作。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 1.1.2 服务端钩子与权限控制 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.1.2 服务端钩子与权限控制</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            服务端钩子在Git服务器上执行，主要用于全局控制推送行为，如分支保护、自动化部署等。服务端钩子的输出信息会返回给客户端控制台，所以给开发者返回信息非常方便。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">pre-receive钩子</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                每当有用户使用git push命令推送提交到仓库时被触发，这个钩子脚本应该放置于远程仓库，用于接收推送。pre-receive钩子会在更新仓库的提交引用之前被执行，因此非常适合用于强制开发规范。
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">#!/bin/sh
 # 防止向main分支直接推送
 while read oldrev newrev refname
 do
@@ -74,39 +287,233 @@ do
     fi
 done</code></pre>
                             </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">update钩子</h5>
+                                <p class="text-gray-700 dark:text-gray-400 leading-relaxed text-sm">
+                                    在pre-receive之后被触发执行，它们的工作模式基本类似。不同的是，update钩子是根据推送的多个引用分别被调用。如果用户尝试推送4个分支，update会执行4次。
+                                </p>
+                            </div>
                             
-                            <div class="code-block">
-                                <h5>post-receive 钩子示例（自动部署）</h5>
-                                <pre><code>#!/bin/sh
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">post-receive钩子</h5>
+                                <p class="text-gray-700 dark:text-gray-400 leading-relaxed text-sm">
+                                    在成功推送操作之后被触发，适合用于发送通知。对于很多工作流来说，此时触发通知比post-commit触发通知更合适，因为此时变更已经存在于公共服务器上。
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-3 mt-3">
+                                    <button class="copy-btn bg-gray-200 dark:bg-dark-800 p-1 rounded text-xs" onclick="copyCode(this)">
+                                        <i class="fa fa-copy"></i>
+                                    </button>
+                                    <pre class="text-xs font-mono"><code class="language-bash">#!/bin/sh
 # 自动部署到生产环境
 git --work-tree=/var/www/html --git-dir=/home/user/repo.git checkout -f
 echo "网站已成功部署！"</code></pre>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- 1.2 子模块与大型仓库管理 -->
-                        <div class="card-section">
-                            <h3 id="submodules">1.2 子模块与大型仓库管理</h3>
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800/30 mb-4">
+                            <h5 class="text-lg font-medium mb-2 text-yellow-800 dark:text-yellow-300 flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-2"></i>安全配置注意事项
+                            </h5>
+                            <p class="text-yellow-700 dark:text-yellow-400 leading-relaxed text-sm">
+                                服务端钩子的安全配置至关重要。需要确保钩子文件具有执行权限，且文件必须位于.git/hooks目录下，文件名必须与Git钩子的预定义名称相匹配。同时，要遵循最小权限原则，只授予钩子执行必要操作的权限。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 1.1.3 钩子脚本编写规范与自动化集成 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.1.3 钩子脚本编写规范与自动化集成</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            编写Git钩子脚本时，需要遵循几个最佳实践。首先，脚本应该能够在不同的操作系统和环境中运行，具有良好的可移植性。其次，当脚本检测到错误时，应该返回有意义的错误消息，便于开发者理解和修复问题。此外，记录钩子的执行过程，以便于事后审查也是重要的实践。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">集成ESLint和Prettier的pre-commit钩子</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                通过集成ESLint和Prettier到Git钩子，团队可以强制执行统一的代码质量标准，减少因风格差异引起的问题，提高代码的整洁性和可维护性。
+                            </p>
                             
-                            <h4 id="submodule-usage">1.2.1 子模块高级用法与嵌套管理</h4>
-                            <p>Git 子模块（Submodule）允许将一个 Git 仓库作为另一个 Git 仓库的子目录嵌入使用，为模块化架构提供支持。</p>
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">#!/bin/sh
+# 集成ESLint和Prettier的pre-commit钩子
+npx eslint $(git diff --cached --name-only) --quiet --ext .js,.jsx,.ts,.tsx
+npx prettier --check $(git diff --cached --name-only)</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">在Husky中配置特定运行环境</h5>
                             
-                            <div class="code-block">
-                                <h5>添加子模块的高级选项</h5>
-                                <pre><code>git submodule add -b release-1.2.3 --name external-lib https://github.com/vendor/awesome-lib.git vendor/awesome-lib</code></pre>
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash"># .husky/pre-commit
+bash << EOF
+# 你的Bash脚本
+# ...
+EOF</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800/30 mb-4">
+                            <h5 class="text-lg font-medium mb-2 text-blue-800 dark:text-blue-300 flex items-center">
+                                <i class="fa fa-lightbulb-o mr-2"></i>大型项目钩子设计建议
+                            </h5>
+                            <p class="text-blue-700 dark:text-blue-400 leading-relaxed text-sm">
+                                在大型项目中，钩子多个维度：代码一致性、质量保证、工作流优化和安全审计。例如，在一个典型的大型Web应用开发项目中，可能需要在pre-commit阶段执行代码风格检查和单元测试，在post-commit阶段自动化部署到测试服务器，在pre-push阶段运行集成测试并检查代码质量。
+                            </p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 1.2 子模块与大型仓库管理 -->
+                <section id="submodules" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">1.2 子模块与大型仓库管理</h3>
+                    
+                    <!-- 1.2.1 子模块高级用法与嵌套管理 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.2.1 子模块高级用法与嵌套管理</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            Git子模块（Submodule）是Git版本控制系统中的一项高级功能，它允许开发人员将一个Git仓库作为另一个Git仓库的子目录嵌入使用。这种机制为现代软件开发中的模块化架构提供了强大的支持，具有独立版本控制、精确版本锁定、递归管理、灵活更新等核心特征。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">添加子模块的高级选项</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                包括指定跟踪分支、自定义子模块名称等。
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">git submodule add -b release-1.2.3 --name external-lib https://github.com/vendor/awesome-lib.git vendor/awesome-lib</code></pre>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-500">
+                                其中，-b参数指定跟踪的分支，--name参数自定义子模块名称，最后两个参数分别为仓库URL和本地路径。
+                            </p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">克隆包含子模块的仓库</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                可以使用--recurse-submodules参数自动初始化和更新所有子模块：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">git clone --recurse-submodules --jobs 8 --depth 1 https://github.com/your-project/main-repo.git</code></pre>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-500 mb-3">
+                                推荐参数--jobs/-j用于并行克隆加速，--depth 1用于浅克隆优化体积。
+                            </p>
+                            
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                如果在克隆时没有使用--recurse-submodules参数，可以在克隆后使用以下命令初始化和更新子模块：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">git submodule update --init --recursive</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">子模块的更新策略</h5>
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-1">更新子模块到最新版本：</p>
+                                        <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2">
+                                            <pre class="text-xs font-mono"><code class="language-bash">git submodule update --remote</code></pre>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-1">获取最新提交并合并：</p>
+                                        <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2">
+                                            <pre class="text-xs font-mono"><code class="language-bash">git submodule update --remote --merge</code></pre>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-1">拉取特定分支的最新代码：</p>
+                                        <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2">
+                                            <pre class="text-xs font-mono"><code class="language-bash">git submodule update --remote --branch develop</code></pre>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-1">递归更新嵌套子模块：</p>
+                                        <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2">
+                                            <pre class="text-xs font-mono"><code class="language-bash">git submodule update --remote --recursive</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="code-block">
-                                <h5>克隆包含子模块的仓库</h5>
-                                <pre><code>git clone --recurse-submodules --jobs 8 --depth 1 https://github.com/your-project/main-repo.git</code></pre>
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">子模块的批量操作</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    通过git submodule foreach命令实现批量操作：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-3 mb-3">
+                                    <button class="copy-btn bg-gray-200 dark:bg-dark-800 p-1 rounded text-xs" onclick="copyCode(this)">
+                                        <i class="fa fa-copy"></i>
+                                    </button>
+                                    <pre class="text-xs font-mono"><code class="language-bash">git submodule foreach '
+    git checkout main
+    git pull origin main
+'</code></pre>
+                                </div>
+                                
+                                <h5 class="text-lg font-medium mt-4 mb-2 text-gray-800 dark:text-gray-300">嵌套子模块的管理</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    处理多层级子模块结构：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-3">
+                                    <button class="copy-btn bg-gray-200 dark:bg-dark-800 p-1 rounded text-xs" onclick="copyCode(this)">
+                                        <i class="fa fa-copy"></i>
+                                    </button>
+                                    <pre class="text-xs font-mono"><code class="language-bash"># 递归初始化和更新所有子模块
+git submodule update --init --recursive
+# 带深度限制的递归拉取（节省磁盘空间）
+git submodule update --init --recursive --depth 1</code></pre>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 1.2.2 大型仓库性能优化策略 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.2.2 大型仓库性能优化策略</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            随着软件项目的不断演进，代码库的规模也在迅速膨胀。在大型项目中，常见的挑战包括Git仓库体积过大导致克隆缓慢、包含大量二进制文件、协作流程复杂、分支管理困难、构建和测试效率下降等。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">仓库体积优化的七维策略</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                是解决大型仓库问题的系统性方法。第一，大文件治理全流程，包括分析仓库文件占用、迁移历史大文件到LFS、清理残留大对象、优化仓库配置等步骤：
+                            </p>
                             
-                            <h4 id="large-repo-optimization">1.2.2 大型仓库性能优化策略</h4>
-                            <p>随着项目演进，代码库规模膨胀，需要采取策略优化性能：</p>
-                            
-                            <div class="code-block">
-                                <h5>大文件治理流程</h5>
-                                <pre><code># 1. 分析仓库文件占用
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash"># 1. 分析仓库文件占用
 git lfs migrate info --everything --top=20
 
 # 2. 迁移历史大文件到LFS
@@ -120,9 +527,49 @@ git config core.bigFileThreshold 50M
 git config pack.windowMemory 1g</code></pre>
                             </div>
                             
-                            <div class="code-block">
-                                <h5>稀疏检出示例</h5>
-                                <pre><code># 初始化稀疏检出
+                            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800/30 mb-4">
+                                <p class="text-green-700 dark:text-green-400 leading-relaxed text-sm">
+                                    <i class="fa fa-bar-chart mr-2"></i>数据显示，某游戏公司美术资源库迁移后，克隆时间从87分钟降至4分钟，仓库体积减少82%。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Git LFS迁移效果图表 -->
+                        <div class="mb-8">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">Git LFS迁移效果对比</h5>
+                            <div class="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <canvas id="lfsMigrationChart" height="250"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">浅层克隆</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    优化大仓库克隆速度的有效方法，适用于CI/CD或临时开发环境：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2 mb-2">
+                                    <pre class="text-xs font-mono"><code class="language-bash">git clone --depth 1 https://github.com/yourname/repo.git</code></pre>
+                                </div>
+                                
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-2">
+                                    仅获取最近一次提交的历史，显著减少数据传输量。如果需要获取更多历史：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2">
+                                    <pre class="text-xs font-mono"><code class="language-bash">git fetch --deepen=200</code></pre>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">稀疏检出</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    允许克隆仓库时只克隆部分内容，配合部分克隆特性：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2 mb-2">
+                                    <pre class="text-xs font-mono"><code class="language-bash"># 初始化稀疏检出
 git clone --no-checkout https://github.com/monorepo.git
 cd monorepo
 git sparse-checkout init --cone
@@ -132,19 +579,211 @@ git sparse-checkout set src/core libs/utils
 
 # 检出文件
 git checkout main</code></pre>
+                                </div>
+                                
+                                <p class="text-sm text-gray-700 dark:text-gray-400">
+                                    大幅降低拉取时间，加快克隆速度，并在需要历史信息时自动下载。
+                                </p>
+                            </div>
+                            
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">定期清理和优化</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    维护大型仓库性能的重要措施：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2 mb-2">
+                                    <pre class="text-xs font-mono"><code class="language-bash"># 清理冗余对象
+git gc --aggressive
+
+# 深度优化
+git gc --aggressive --prune=now</code></pre>
+                                </div>
+                                
+                                <h5 class="text-lg font-medium mt-4 mb-2 text-gray-800 dark:text-gray-300">拆分大型仓库</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-2">
+                                    处理超大型项目的终极策略：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2">
+                                    <pre class="text-xs font-mono"><code class="language-bash"># 拆分某个目录的历史到新分支
+git subtree split -P path/to/dir -b new-branch</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 1.2.3 Git LFS配置与大文件管理 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.2.3 Git LFS配置与大文件管理</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            Git LFS（Large File Storage）是Git的一个扩展，用于替代Git默认的大文件存储方式。它不会将大文件实际提交到Git仓库中，而是保存指向远程服务器的指针，真实文件则托管在LFS服务器上。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">Git LFS的安装和配置</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                首先安装Git LFS：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">git lfs install</code></pre>
+                            </div>
+                            
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                然后配置需要跟踪的文件类型。例如，跟踪.psd和.mp4文件：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash">git lfs track "*.psd"
+git lfs track "*.mp4"</code></pre>
+                            </div>
+                            
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                这会在.gitattributes文件中添加跟踪规则：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code>*.psd filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text</code></pre>
                             </div>
                         </div>
                         
-                        <!-- 1.3 CI/CD 集成实战 -->
-                        <div class="card-section">
-                            <h3 id="cicd-integration">1.3 CI/CD 集成实战</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">提交和推送LFS文件</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    流程与普通文件类似，但实际存储方式不同：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-3 mb-3">
+                                    <button class="copy-btn bg-gray-200 dark:bg-dark-800 p-1 rounded text-xs" onclick="copyCode(this)">
+                                        <i class="fa fa-copy"></i>
+                                    </button>
+                                    <pre class="text-xs font-mono"><code class="language-bash">git add .gitattributes
+git add file.psd
+git commit -m "Add large asset"
+git push origin main</code></pre>
+                                </div>
+                                
+                                <p class="text-sm text-gray-700 dark:text-gray-400">
+                                    需要注意的是，LFS文件需要远程支持，如GitHub、GitLab、自建Git LFS服务器等。
+                                </p>
+                            </div>
                             
-                            <h4 id="cicd-platforms">1.3.1 主流 CI/CD 平台集成方案</h4>
-                            <p>持续集成与持续部署是保障代码质量、提升交付效率的关键实践。</p>
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">查看LFS文件状态</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    可以使用以下命令：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-3 mb-3">
+                                    <button class="copy-btn bg-gray-200 dark:bg-dark-800 p-1 rounded text-xs" onclick="copyCode(this)">
+                                        <i class="fa fa-copy"></i>
+                                    </button>
+                                    <pre class="text-xs font-mono"><code class="language-bash">git lfs ls-files</code></pre>
+                                </div>
+                                
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-2">
+                                    输出示例：
+                                </p>
+                                
+                                <div class="bg-gray-100 dark:bg-dark-900 rounded-md p-3 text-xs font-mono text-gray-700 dark:text-gray-300">
+                                    ✔  1.2 MB   myvideo.mp4<br>
+                                    ✔  500 KB   design.psd
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">Git LFS的工作原理</h5>
+                            <div class="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700 mb-4">
+                                <pre class="text-sm font-mono text-center whitespace-pre-wrap">
+[本地]                  [远程 LFS Server]
+   ↓                          ↑
+[Git Commit] → [.lfs文件指针] → [真实文件存储]</pre>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-400 leading-relaxed">
+                                .lfs文件只记录元信息（大小、哈希、路径），不存储实际内容。实际文件上传至LFS服务器，由Git LFS扩展负责下载和还原。
+                            </p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">大型项目中的LFS策略设计</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                需要考虑多个维度。在一个典型的大型项目中，可能需要跟踪的文件类型包括：
+                            </p>
                             
-                            <div class="code-block">
-                                <h5>GitHub Actions 示例（Node.js CI）</h5>
-                                <pre><code># .github/workflows/ci.yml
+                            <ul class="list-disc pl-6 mb-4 text-gray-700 dark:text-gray-400 space-y-1">
+                                <li>游戏开发中的美术资源（.psd、.png、.fbx等）</li>
+                                <li>AI/ML项目中的训练模型（.h5、.pt等）</li>
+                                <li>音视频素材（.mp4、.mov、.wav等）</li>
+                                <li>日志文件、数据库导出文件等</li>
+                            </ul>
+                            
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                在CI/CD流程中，需要确保安装Git LFS并启用：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-yaml">jobs:
+  build:
+    steps:
+      - name: Install Git LFS
+        run: git lfs install
+      - name: Checkout code
+        run: git clone https://github.com/yourname/repo.git</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 1.3 CI/CD集成实战 -->
+                <section id="cicd" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">1.3 CI/CD集成实战</h3>
+                    
+                    <!-- 1.3.1 主流CI/CD平台集成方案 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.3.1 主流CI/CD平台集成方案</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            在现代软件开发中，持续集成（CI）与持续交付/部署（CD）是保障代码质量、提升交付效率、减少人为错误的关键实践。Git作为版本控制的核心工具，天然支持与各类CI/CD平台的深度集成。
+                        </p>
+                        
+                        <div class="mb-8">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">GitHub Actions集成方案</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                是GitHub原生的CI/CD工具，具有与GitHub生态系统无缝集成的优势。GitHub Actions的核心组件包括：
+                            </p>
+                            
+                            <ul class="list-disc pl-6 mb-4 text-gray-700 dark:text-gray-400 space-y-1">
+                                <li>Workflow：一个完整的自动化流程，定义在.github/workflows/*.yml中</li>
+                                <li>Job：Workflow中的一个任务组</li>
+                                <li>Step：Job中的具体操作步骤</li>
+                                <li>Action：可复用的操作模块（官方或社区提供）</li>
+                                <li>Runner：执行任务的机器（GitHub Hosted或自建）</li>
+                            </ul>
+                            
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                以下是一个Node.js项目的CI流程示例：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-6">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-yaml"># .github/workflows/ci.yml
 name: Node.js CI
 on:
   push:
@@ -164,9 +803,49 @@ jobs:
       - run: npm test</code></pre>
                             </div>
                             
-                            <div class="code-block">
-                                <h5>GitLab CI/CD 示例</h5>
-                                <pre><code># .gitlab-ci.yml
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                前端项目构建并部署到GitHub Pages的示例：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-6">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-yaml"># .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: npm run build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">GitLab CI/CD集成方案</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                是GitLab原生的自动化平台，配置文件为.gitlab-ci.yml，位于项目根目录。以下是一个Node.js项目的CI流程示例：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-6">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-yaml"># .gitlab-ci.yml
 stages:
   - build
   - test
@@ -192,327 +871,586 @@ deploy_to_prod:
   only:
     - main</code></pre>
                             </div>
+                            
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                使用GitLab Runner部署到远程服务器的示例：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-6">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-yaml">deploy_staging:
+  image: alpine
+  stage: deploy
+  script:
+    - apk add --no-cache openssh
+    - ssh root@your-server "cd /path/to/app && git pull origin staging && npm install && pm2 restart app"
+  only:
+    - staging</code></pre>
+                            </div>
                         </div>
-                    </section>
+                    </div>
                     
-                    <!-- 二、团队协作与开源项目实践 -->
-                    <section class="card">
-                        <h2 id="team-collaboration">二、团队协作与开源项目实践</h2>
+                    <!-- 1.3.2 Webhook配置与自动化触发 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.3.2 Webhook配置与自动化触发</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            Webhook是实现Git与CI/CD集成的关键机制，它允许Git仓库在特定事件发生时自动触发CI/CD流程。
+                        </p>
                         
-                        <!-- 2.1 开源项目协作模式 -->
-                        <div class="card-section">
-                            <h3 id="open-source-collab">2.1 开源项目协作模式</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">GitHub Webhook配置</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    可以在仓库设置中的Webhooks选项卡进行。配置时需要提供：
+                                </p>
+                                
+                                <ul class="list-disc pl-5 mb-3 text-sm text-gray-700 dark:text-gray-400 space-y-1">
+                                    <li>Payload URL：CI/CD服务器接收Webhook的URL</li>
+                                    <li>Content Type：通常为application/json</li>
+                                    <li>Secret：用于验证Webhook请求的密钥</li>
+                                </ul>
+                            </div>
                             
-                            <h4 id="fork-pr-workflow">2.1.1 Fork 与 Pull Request 工作流</h4>
-                            <p>Forking Workflow 专为开源项目或分布式团队协作设计，核心特点是"每个贡献者拥有独立的远程仓库副本"。</p>
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">GitLab Webhook配置</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    类似，在项目设置的Integrations选项中配置。需要注意的是，GitLab会自动检测.gitlab-ci.yml文件并开始运行流水线。
+                                </p>
+                                
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-2">
+                                    使用Webhook触发Jenkins构建的示例：
+                                </p>
+                                
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-2">
+                                    <pre class="text-xs font-mono"><code class="language-bash">curl -X POST -H "Authorization: YOUR_GITHUB_TOKEN" https://api.github.com/repos/YOUR_USERNAME/YOUR_REPOSITORY/dispatches</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800/30 mb-4">
+                            <h5 class="text-lg font-medium mb-2 text-blue-800 dark:text-blue-300">Webhook的最佳实践</h5>
+                            <ol class="list-decimal pl-5 text-blue-700 dark:text-blue-400 space-y-1">
+                                <li>使用HTTPS连接并验证SSL证书</li>
+                                <li>安全存储Webhook密钥</li>
+                                <li>仅订阅需要的Webhook事件</li>
+                                <li>在处理事件前检查事件类型和操作</li>
+                                <li>使用X-GitHub-Delivery头进行重试处理</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <!-- 1.3.3 多环境部署与版本管理 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">1.3.3 多环境部署与版本管理</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            多环境部署是现代CI/CD流程的重要组成部分，通常包括开发环境（Dev）、测试环境（Staging）和生产环境（Prod）。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">基于分支的多环境部署策略</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                是最常见的方案。以下是一个Vue项目的多环境部署示例：
+                            </p>
                             
-                            <div class="code-block">
-                                <h5>Fork 工作流操作步骤</h5>
-                                <pre><code># 1. 克隆Fork后的仓库到本地
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-6">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-yaml"># .github/workflows/deploy.yml
+name: Vue CI/CD
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: npm run build
+      - name: Deploy to Dev
+        if: github.ref == 'refs/heads/dev'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: prod</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">GitLab CI的多环境部署</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                可以使用rules关键字实现：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-6">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-yaml"># .gitlab-ci.yml
+image: node:18
+stages:
+  - build
+  - deploy
+
+build_app:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+deploy_dev:
+  stage: deploy
+  script:
+    - scp -r dist/* user@dev-server:/var/www/vue-app
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+deploy_prod:
+  stage: deploy
+  script:
+    - scp -r dist/* user@prod-server:/var/www/vue-app
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">版本管理策略</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                通常与Git标签（Tag）结合使用。以下是一个使用Git标签触发部署的示例：
+                            </p>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash"># 打标签
+git tag -a v1.0.0 -m "Release v1.0.0"
+git push origin v1.0.0
+
+# 在CI/CD中根据标签触发部署
+on:
+  push:
+    tags:
+      - 'v*'</code></pre>
+                            </div>
+                            
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <p class="text-sm text-gray-700 dark:text-gray-400">
+                                    在实际应用中，一套好的Git + CI/CD + 云部署流程，至少要满足：支持主流Git服务（GitHub、Gitea、GitLab）、能自动构建并测试代码、能自动部署到云服务器或云函数、配置简单、学习曲线平缓。推荐的组合方案包括：GitHub + GitHub Actions + GCP Cloud Run / Nice Cloud轻量云主机。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            
+            <!-- 第二章：团队协作与开源项目实践 -->
+            <section id="team-collaboration" class="mb-16">
+                <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white border-b pb-2 border-gray-200 dark:border-dark-700">二、团队协作与开源项目实践</h2>
+                
+                <!-- 2.1 开源项目协作模式 -->
+                <section id="open-source" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">2.1 开源项目协作模式</h3>
+                    
+                    <!-- 2.1.1 Fork与Pull Request工作流 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">2.1.1 Fork与Pull Request工作流</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            Forking Workflow是专为开源项目或分布式团队协作设计的Git工作流，核心特点是"每个贡献者拥有独立的远程仓库副本"，通过Pull Request（PR）向主仓库提交代码。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">Forking Workflow的核心流程</h5>
+                            <p class="mb-3 text-gray-700 dark:text-gray-400 leading-relaxed">
+                                包括以下步骤：
+                            </p>
+                            
+                            <ol class="list-decimal pl-6 mb-6 text-gray-700 dark:text-gray-400 space-y-2">
+                                <li><strong>主仓库（Upstream Repository）</strong>：官方唯一代码库，由维护者管理，贡献者无权直接推送</li>
+                                <li><strong>贡献者Fork仓库</strong>：贡献者通过平台（如GitHub）创建主仓库的副本（Fork）</li>
+                                <li><strong>本地开发</strong>：贡献者克隆自己的Fork仓库到本地，创建分支开发功能</li>
+                                <li><strong>提交Pull Request (PR)</strong>：贡献者通过平台发起PR，请求将代码合并到主仓库</li>
+                                <li><strong>维护者审核并合并</strong>：维护者审核代码后决定是否合并</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">详细操作步骤</h5>
+                            
+                            <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4">
+                                <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1.5 rounded text-xs" onclick="copyCode(this)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                                <pre class="text-sm font-mono"><code class="language-bash"># 1. Fork主仓库（在GitHub/GitLab上点击Fork按钮）
+
+# 2. 克隆Fork后的仓库到本地
 git clone https://github.com/your-username/project.git
 cd project
 
-# 2. 关联主仓库（Upstream）
-git remote add upstream https://github.com/org/project.git
-git fetch upstream
+# 3. 关联主仓库（Upstream）
+git remote add upstream https://github.com/org/project.git  # 添加主仓库为上游
+git fetch upstream  # 同步主仓库分支
 
-# 3. 开发新功能
-git checkout -b feat/new-button
+# 4. 开发新功能
+git checkout -b feat/new-button  # 从本地默认分支创建开发分支
 # 编写代码并提交
 git commit -m "feat(ui): 新增按钮组件"
-git push origin feat/new-button
+git push origin feat/new-button  # 推送到自己的Fork仓库
 
-# 4. 同步主仓库更新
-git fetch upstream
-git checkout main
-git merge upstream/main
-git push origin main</code></pre>
+# 5. 创建Pull Request (PR)
+# 在Fork仓库页面点击"Compare & Pull Request"，选择主仓库的目标分支</code></pre>
                             </div>
                         </div>
                         
-                        <!-- 2.2 企业团队工作流设计 -->
-                        <div class="card-section">
-                            <h3 id="enterprise-workflow">2.2 企业团队工作流设计</h3>
-                            
-                            <h4 id="workflow-comparison">2.2.1 主流工作流模式对比分析</h4>
-                            <p>企业团队在选择 Git 工作流时，需要根据项目规模、团队结构、发布频率等因素综合考虑。</p>
-                            
-                            <div class="chart-container">
-                                <canvas id="workflowComparisonChart"></canvas>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">维护者审核流程</h5>
+                                <ul class="list-disc pl-5 text-sm text-gray-700 dark:text-gray-400 space-y-1">
+                                    <li>检查代码质量和功能完整性</li>
+                                    <li>通过CI/CD测试验证</li>
+                                    <li>进行代码审查并提出反馈</li>
+                                    <li>选择"Squash and Merge"压缩提交历史（可选）</li>
+                                    <li>合并PR到主仓库</li>
+                                </ul>
                             </div>
                             
-                            <div class="table-container">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>工作流模式</th>
-                                            <th>核心特点</th>
-                                            <th>适用场景</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Git Flow</td>
-                                            <td>严格的分支模型，包含 develop、feature、release、hotfix 分支</td>
-                                            <td>大型项目、传统发布周期</td>
-                                        </tr>
-                                        <tr>
-                                            <td>GitHub Flow</td>
-                                            <td>基于主干的简单工作流，所有功能直接在 main 分支开发</td>
-                                            <td>敏捷开发、持续交付</td>
-                                        </tr>
-                                        <tr>
-                                            <td>GitLab Flow</td>
-                                            <td>基于环境的工作流，每个环境对应一个分支</td>
-                                            <td>多环境部署、DevOps</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Trunk-Based</td>
-                                            <td>所有代码直接提交到主干，通过特性开关控制</td>
-                                            <td>高频发布、微服务架构</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">同步主仓库更新到本地</h5>
+                                <div class="code-block bg-gray-100 dark:bg-dark-900 rounded-md p-3 mb-2">
+                                    <button class="copy-btn bg-gray-200 dark:bg-dark-800 p-1 rounded text-xs" onclick="copyCode(this)">
+                                        <i class="fa fa-copy"></i>
+                                    </button>
+                                    <pre class="text-xs font-mono"><code class="language-bash">git fetch upstream          # 获取主仓库最新代码
+git checkout main           # 切换到本地主分支
+git merge upstream/main     # 合并主仓库的更新
+git push origin main        # 更新自己的Fork仓库</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800/30 mb-4">
+                            <h5 class="text-lg font-medium mb-2 text-green-800 dark:text-green-300">Forking Workflow的核心优点</h5>
+                            <ol class="list-decimal pl-5 text-green-700 dark:text-green-400 space-y-1">
+                                <li><strong>严格的权限控制</strong>：贡献者无法直接修改主仓库，降低代码被意外破坏的风险</li>
+                                <li><strong>清晰的代码审查流程</strong>：通过PR机制强制代码评审，确保代码质量</li>
+                                <li><strong>适合分布式协作</strong>：开源社区贡献者无需权限申请，Fork即可参与</li>
+                                <li><strong>隔离开发环境</strong>：每个贡献者的Fork仓库独立，避免分支命名冲突</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <!-- 2.1.2 开源项目贡献流程与规范 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">2.1.2 开源项目贡献流程与规范</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            参与开源项目贡献需要遵循一定的流程和规范，以确保贡献的质量和可接受性。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">贡献前的准备工作</h5>
+                            
+                            <ol class="list-decimal pl-6 mb-6 text-gray-700 dark:text-gray-400 space-y-2">
+                                <li><strong>了解项目</strong>：仔细阅读项目的README文件、贡献指南（CONTRIBUTING.md）和行为准则</li>
+                                <li><strong>设置开发环境</strong>：按照项目说明配置本地开发环境</li>
+                                <li><strong>选择贡献内容</strong>：从项目的Issues中选择合适的任务，或者提出新的功能建议</li>
+                                <li><strong>创建Issue</strong>：如果要解决某个问题，先创建Issue说明情况和解决方案</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">贡献流程规范</h5>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">1. <strong>创建功能分支</strong>：从主分支创建新的功能分支</p>
+                                    <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-3">
+                                        <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1 rounded text-xs" onclick="copyCode(this)">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                        <pre class="text-sm font-mono"><code class="language-bash">git checkout -b feature/new-feature main</code></pre>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">2. <strong>本地开发和测试</strong>：在功能分支上进行开发，确保代码通过所有测试</p>
+                                    <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-3">
+                                        <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1 rounded text-xs" onclick="copyCode(this)">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                        <pre class="text-sm font-mono"><code class="language-bash"># 运行测试
+npm test
+# 或者
+make test</code></pre>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">3. <strong>提交规范的Commit信息</strong>：遵循项目的提交信息规范</p>
+                                    <div class="bg-gray-100 dark:bg-dark-800 rounded-md p-3 text-sm font-mono text-gray-700 dark:text-gray-300">
+                                        feat(ui): add new button component<br>
+                                        - Implement new button component with hover effect<br>
+                                        - Add unit tests for the button component<br>
+                                        - Update documentation for the new component
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">4. <strong>推送分支并创建PR</strong>：</p>
+                                    <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-3">
+                                        <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1 rounded text-xs" onclick="copyCode(this)">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                        <pre class="text-sm font-mono"><code class="language-bash">git push origin feature/new-feature</code></pre>
+                                    </div>
+                                    <p class="mt-2 text-gray-700 dark:text-gray-400 text-sm">
+                                        在GitHub上创建Pull Request，填写标题和描述，关联相关的Issue。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">代码审查过程</h5>
+                                <ul class="list-disc pl-5 text-sm text-gray-700 dark:text-gray-400 space-y-1">
+                                    <li>审查者会在PR中留下评论和反馈</li>
+                                    <li>开发者根据反馈进行修改</li>
+                                    <li>可以通过对话讨论改进方案</li>
+                                    <li>直到审查者满意并批准</li>
+                                </ul>
                             </div>
                             
-                            <h4 id="branch-strategy">2.2.2 分支策略与版本发布流程</h4>
-                            <p>分支策略是企业 Git 工作流的核心，需要根据项目特点和团队需求进行设计。</p>
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">常见问题处理</h5>
+                                <ul class="list-disc pl-5 text-sm text-gray-700 dark:text-gray-400 space-y-1">
+                                    <li><strong>冲突解决</strong>：如果PR存在合并冲突，需要先在本地解决冲突</li>
+                                    <li><strong>代码格式</strong>：确保代码符合项目的格式规范</li>
+                                    <li><strong>测试覆盖</strong>：新增功能需要相应的测试用例</li>
+                                    <li><strong>文档更新</strong>：功能变更需要更新相关文档</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800/30 mb-4">
+                            <h5 class="text-lg font-medium mb-2 text-blue-800 dark:text-blue-300">最佳实践</h5>
+                            <ol class="list-decimal pl-5 text-blue-700 dark:text-blue-400 space-y-1">
+                                <li><strong>保持Fork仓库同步</strong>：定期运行git fetch upstream并合并到本地分支</li>
+                                <li><strong>分支命名规范</strong>：使用feat/*、fix/*等前缀，明确分支用途</li>
+                                <li><strong>精简提交历史</strong>：发起PR前使用git rebase整理提交，避免冗余记录</li>
+                                <li><strong>关联Issue</strong>：在PR描述中标注Closes #123，便于跟踪问题</li>
+                                <li><strong>自动化检查</strong>：配置CI/CD在PR中自动运行测试和代码扫描</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 2.2 企业团队工作流设计 -->
+                <section id="team-workflow" class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">2.2 企业团队工作流设计</h3>
+                    
+                    <!-- 2.2.1 主流工作流模式对比分析 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">2.2.1 主流工作流模式对比分析</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            企业团队在选择Git工作流时，需要根据项目规模、团队结构、发布频率等因素综合考虑。以下是几种主流工作流模式的对比分析：
+                        </p>
+                        
+                        <!-- 工作流对比表格 -->
+                        <div class="overflow-x-auto mb-8">
+                            <table class="min-w-full bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 rounded-lg">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-dark-700">
+                                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">工作流模式</th>
+                                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">核心特点</th>
+                                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">适用场景</th>
+                                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">优点</th>
+                                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">缺点</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-dark-700/50">
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600 font-medium">Git Flow</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">严格的分支模型，包含develop、feature、release、hotfix分支</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">大型项目、传统发布周期</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">版本管理清晰、发布流程规范</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">流程复杂、学习成本高</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-dark-700/50">
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600 font-medium">GitHub Flow</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">基于主干的简单工作流，所有功能直接在main分支开发</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">敏捷开发、持续交付</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">流程简单、迭代快速</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">缺乏发布管理</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-dark-700/50">
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600 font-medium">GitLab Flow</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">基于环境的工作流，每个环境对应一个分支</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">多环境部署、DevOps</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">环境隔离清晰、部署灵活</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-dark-600">需要严格的环境管理</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-dark-700/50">
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300 font-medium">Trunk-Based Development</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300">所有代码直接提交到主干，通过特性开关控制</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300">高频发布、微服务架构</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300">集成风险低、发布快速</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700 dark:text-gray-300">需要强大的自动化测试</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- 工作流部署频率对比图表 -->
+                        <div class="mb-8">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">不同工作流模式部署频率对比</h5>
+                            <div class="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <canvas id="workflowComparisonChart" height="250"></canvas>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-500 mt-2">
+                                数据来源：GitLab 2023年开发者调研，采用Trunk-Based的团队平均部署频率比传统模式高3.2倍
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">Git Flow工作流详解</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    Git Flow是一种基于分支的工作流，它将开发周期划分为不同的分支，以便更好地管理功能开发、修复和发布。核心分支包括：
+                                </p>
+                                
+                                <ul class="list-disc pl-5 text-sm text-gray-700 dark:text-gray-400 space-y-1">
+                                    <li>main（生产环境）：始终保持生产环境的代码</li>
+                                    <li>develop（开发集成）：集成所有功能的开发分支</li>
+                                    <li>feature/*（功能开发）：基于develop创建，用于开发新功能</li>
+                                    <li>release/*（发布准备）：基于develop创建，用于准备发布</li>
+                                    <li>hotfix/*（紧急修复）：基于main创建，用于修复生产环境的紧急问题</li>
+                                </ul>
+                            </div>
                             
-                            <div class="code-block">
-                                <h5>版本发布流程</h5>
-                                <pre><code># 从develop分支创建发布分支
-git checkout -b release/v2.1.0 develop
-
-# 合并到main分支
+                            <div class="bg-gray-50 dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-700">
+                                <h5 class="text-lg font-medium mb-2 text-gray-800 dark:text-gray-300">GitHub Flow工作流详解</h5>
+                                <p class="text-sm text-gray-700 dark:text-gray-400 mb-3">
+                                    GitHub Flow是一个基于分支的轻量级工作流程，核心流程包括：
+                                </p>
+                                
+                                <ol class="list-decimal pl-5 text-sm text-gray-700 dark:text-gray-400 space-y-1">
+                                    <li>创建分支：在仓库中创建分支，创建工作空间而不影响默认分支</li>
+                                    <li>进行更改：在分支上对仓库进行任何所需的更改</li>
+                                    <li>提交并推送：提交并将更改推送到分支</li>
+                                    <li>创建拉取请求：使用GitHub的拉取请求功能提议将更改合并到主代码库</li>
+                                    <li>解决审查评论：处理审查者的反馈</li>
+                                    <li>合并拉取请求：拉取请求获得批准后，合并拉取请求</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800/30 mb-4">
+                            <h5 class="text-lg font-medium mb-2 text-yellow-800 dark:text-yellow-300">企业工作流选择建议</h5>
+                            <ul class="list-disc pl-5 text-yellow-700 dark:text-yellow-400 space-y-1">
+                                <li><strong>团队规模</strong>：小型团队适合GitHub Flow，大型团队可能需要Git Flow</li>
+                                <li><strong>发布频率</strong>：高频发布适合Trunk-Based，低频发布适合Git Flow</li>
+                                <li><strong>项目复杂度</strong>：简单项目适合GitHub Flow，复杂项目可能需要Git Flow</li>
+                                <li><strong>团队文化</strong>：敏捷文化适合Trunk-Based，传统文化可能倾向Git Flow</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 2.2.2 分支策略与版本发布流程 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-medium mb-3 text-gray-800 dark:text-gray-300">2.2.2 分支策略与版本发布流程</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-400 leading-relaxed">
+                            分支策略是企业Git工作流的核心，需要根据项目特点和团队需求进行设计。
+                        </p>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">分支命名规范建议</h5>
+                            
+                            <div class="bg-gray-100 dark:bg-dark-800 rounded-md p-4 mb-4 font-mono text-sm">
+                                主分支：main 或 master（推荐前者）<br>
+                                开发分支：develop<br>
+                                功能分支：feature/功能描述（如feature/payment-system）<br>
+                                修复分支：bugfix/问题描述（如bugfix/login-error）<br>
+                                热修复分支：hotfix/紧急问题（如hotfix/payment-timeout）
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">版本发布流程设计</h5>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">1. <strong>准备发布分支</strong>：</p>
+                                    <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-3">
+                                        <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1 rounded text-xs" onclick="copyCode(this)">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                        <pre class="text-sm font-mono"><code class="language-bash"># 从develop分支创建发布分支
+git checkout -b release/v2.1.0 develop</code></pre>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">2. <strong>进行发布准备工作</strong>：</p>
+                                    <ul class="list-disc pl-6 text-gray-700 dark:text-gray-400 space-y-1">
+                                        <li>更新版本号</li>
+                                        <li>编写发布说明</li>
+                                        <li>进行最终测试</li>
+                                        <li>修复发现的问题</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">3. <strong>合并到主分支和develop分支</strong>：</p>
+                                    <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-3">
+                                        <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1 rounded text-xs" onclick="copyCode(this)">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                        <pre class="text-sm font-mono"><code class="language-bash"># 合并到main分支
 git checkout main
 git merge --no-ff release/v2.1.0
 git tag v2.1.0
 
 # 合并回develop分支
 git checkout develop
-git merge --no-ff release/v2.1.0
-
-# 删除发布分支
-git branch -d release/v2.1.0</code></pre>
-                            </div>
-                        </div>
-                        
-                        <!-- 2.3 代码审查流程与质量控制 -->
-                        <div class="card-section">
-                            <h3 id="code-review">2.3 代码审查流程与质量控制</h3>
-                            
-                            <h4 id="review-standards">2.3.2 审查标准与最佳实践</h4>
-                            <p>代码审查最佳实践包括及时审查、小批量审查、合理分配审查者等。</p>
-                            
-                            <div class="table-container">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>检查类型</th>
-                                            <th>具体内容</th>
-                                            <th>工具/实现方式</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>代码风格</td>
-                                            <td>命名规范、缩进、空格、注释</td>
-                                            <td>ESLint、Prettier</td>
-                                        </tr>
-                                        <tr>
-                                            <td>功能逻辑</td>
-                                            <td>业务逻辑正确性、边界条件处理</td>
-                                            <td>人工审查、单元测试</td>
-                                        </tr>
-                                        <tr>
-                                            <td>性能优化</td>
-                                            <td>避免循环中操作 DOM、冗余对象创建</td>
-                                            <td>Lighthouse、人工审查</td>
-                                        </tr>
-                                        <tr>
-                                            <td>安全性</td>
-                                            <td>SQL 注入、XSS、敏感信息</td>
-                                            <td>ESLint-plugin-security</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- 三、场景化应用与实践案例 -->
-                    <section class="card">
-                        <h2 id="practical-cases">三、场景化应用与实践案例</h2>
-                        
-                        <!-- 3.1 个人开发者进阶实践 -->
-                        <div class="card-section">
-                            <h3 id="individual-practice">3.1 个人开发者进阶实践</h3>
-                            
-                            <h4 id="personal-project">3.1.1 个人项目管理与自动化流程</h4>
-                            <p>对于个人开发者而言，Git 不仅是版本控制系统，更是提升开发效率的重要工具。</p>
-                            
-                            <div class="code-block">
-                                <h5>Git 命令别名设置</h5>
-                                <pre><code># .gitconfig
-[alias]
-co = checkout
-ci = commit
-br = branch
-st = status
-lg = log --graph --oneline --decorate
-amend = commit --amend
-unstage = reset HEAD --</code></pre>
-                            </div>
-                        </div>
-                        
-                        <!-- 3.2 团队协作场景实战 -->
-                        <div class="card-section">
-                            <h3 id="team-scenarios">3.2 团队协作场景实战</h3>
-                            
-                            <h4 id="team-size-strategies">3.2.1 不同规模团队的 Git 策略</h4>
-                            <p>不同规模的团队在使用 Git 时需要采用不同的策略，以适应团队协作的需求。</p>
-                            
-                            <h4 id="case-studies">3.2.2 项目实战案例与经验总结</h4>
-                            <p>以下是几个典型的项目实战案例，展示了 Git 在不同场景下的应用。</p>
-                            
-                            <div class="code-block">
-                                <h5>案例一：紧急修复生产环境 Bug</h5>
-                                <pre><code># 1. 暂存当前未完成的工作
-git stash save "WIP: 用户模块优化"
-
-# 2. 基于生产分支创建修复分支
-git checkout -b hotfix/login-bug origin/production
-
-# 3. 修复并提交
-vim src/login.js   # 修改代码
-git add src/login.js
-git commit -m "fix: 修复登录页空指针异常"
-
-# 4. 推送到远程并提PR
-git push -u origin hotfix/login-bug
-
-# 5. 恢复之前的工作
-git checkout feature/user-module
-git stash pop   # 可能需解决冲突</code></pre>
-                            </div>
-                            
-                            <div class="code-block">
-                                <h5>案例二：团队协作开发新功能</h5>
-                                <pre><code># 1. 拉取最新代码（使用rebase保持历史整洁）
-git fetch origin
-git rebase origin/main
-
-# 2. 开发新功能
-git checkout -b feature/payment
-vim src/payment.js   # 编写代码
-git add src/payment.js
-git commit -m "feat: 接入支付宝SDK"
-
-# 3. 推送分支到远程
-git push -u origin feature/payment</code></pre>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- 四、总结与学习资源推荐 -->
-                    <section class="card">
-                        <h2 id="summary-resources">四、总结与学习资源推荐</h2>
-                        
-                        <div class="card-section">
-                            <h3 id="key-points">各章节重点内容回顾</h3>
-                            <ul>
-                                <li><strong>Git 钩子高级应用</strong>：客户端钩子与服务端钩子的应用场景与示例</li>
-                                <li><strong>子模块与大型仓库管理</strong>：子模块操作、大型仓库优化策略、Git LFS配置</li>
-                                <li><strong>CI/CD 集成实战</strong>：主流平台集成方案、Webhook配置、多环境部署</li>
-                                <li><strong>开源项目协作模式</strong>：Forking Workflow、贡献流程与规范</li>
-                                <li><strong>企业团队工作流设计</strong>：工作流对比、分支策略、代码审查流程</li>
-                            </ul>
-                            
-                            <h3 id="resources">学习资源推荐</h3>
-                            <div class="resource-list">
-                                <div class="resource-item">
-                                    <h4>官方文档</h4>
-                                    <ul>
-                                        <li>Git 官方文档：<a href="https://git-scm.com/docs" target="_blank">https://git-scm.com/docs</a></li>
-                                        <li>GitHub 官方文档：<a href="https://docs.github.com" target="_blank">https://docs.github.com</a></li>
-                                    </ul>
+git merge --no-ff release/v2.1.0</code></pre>
+                                    </div>
                                 </div>
                                 
-                                <div class="resource-item">
-                                    <h4>经典书籍</h4>
-                                    <ul>
-                                        <li>《Pro Git》第二版：<a href="https://git-scm.com/book/zh/v2" target="_blank">https://git-scm.com/book/zh/v2</a></li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="resource-item">
-                                    <h4>工具推荐</h4>
-                                    <ul>
-                                        <li>GitKraken：图形化 Git 客户端</li>
-                                        <li>VS Code GitLens：内联历史查看和代码导航</li>
-                                    </ul>
+                                <div>
+                                    <p class="mb-2 text-gray-700 dark:text-gray-400">4. <strong>删除发布分支</strong>：</p>
+                                    <div class="code-block bg-gray-100 dark:bg-dark-800 rounded-md p-3">
+                                        <button class="copy-btn bg-gray-200 dark:bg-dark-700 p-1 rounded text-xs" onclick="copyCode(this)">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                        <pre class="text-sm font-mono"><code class="language-bash">git branch -d release/v2.1.0</code></pre>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </section>
-                </main>
-                
-                <!-- 页脚（固定格式） -->
-                <footer>
-                    <p>文档最后更新时间：2025年10月04日</p>
-                </footer>
-            </main>
-            <!-- 侧边栏（自动生成，无需编写） -->
-        </div>
-        <!-- 脚本引入（顺序固定） -->
-        <script>
-            // Chart.js初始化逻辑（结合图表容器）
-            document.addEventListener('DOMContentLoaded', function() {
-                // 工作流对比图表
-                const workflowCtx = document.getElementById('workflowComparisonChart').getContext('2d');
-                new Chart(workflowCtx, {
-                    type: 'radar',
-                    data: {
-                        labels: ['简单性', '灵活性', '适合大型团队', '发布管理', '持续部署支持', '学习曲线'],
-                        datasets: [
-                            {
-                                label: 'Git Flow',
-                                data: [3, 4, 5, 5, 2, 2],
-                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                pointBackgroundColor: 'rgba(255, 99, 132, 1)'
-                            },
-                            {
-                                label: 'GitHub Flow',
-                                data: [5, 5, 2, 1, 5, 5],
-                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                pointBackgroundColor: 'rgba(54, 162, 235, 1)'
-                            },
-                            {
-                                label: 'Trunk-Based',
-                                data: [4, 3, 4, 2, 5, 3],
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                pointBackgroundColor: 'rgba(75, 192, 192, 1)'
-                            }
-                        ]
-                    },
-                    options: {
-                        scales: {
-                            r: {
-                                beginAtZero: true,
-                                max: 5,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
-        <script src="../styles/sidebar.js"></script>
-    </div>
-</body>
-</html>
+                        
+                        <div class="mb-6">
+                            <h5 class="text-lg font-medium mb-3 text-gray-800 dark:text-gray-300">紧急修复流程</h5>
+                            
+                            <div class="space-y-6">
+                               
